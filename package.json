@@ -1,0 +1,24 @@
+{
+  "name": "three-experiment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.26.3"
+  },
+  "scripts": {
+    "start": "node_modules/.bin/browser-sync start --server --files=\"**/*\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitaliy-bykovets/three-experiment.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vitaliy-bykovets/three-experiment/issues"
+  },
+  "homepage": "https://github.com/vitaliy-bykovets/three-experiment#readme"
+}
