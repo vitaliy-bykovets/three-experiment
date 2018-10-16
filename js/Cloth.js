@@ -1,4 +1,4 @@
-import Particle from "./Particle.js";
+import ClothMaterial from "./ClothMaterial.js";
 
 const MASS = 0.1;
 const GRAVITY = 869 * 1;
@@ -14,7 +14,7 @@ export default class Cloth {
 
     this.clothFunction = this.plane( restDistance * xSegs, restDistance * ySegs );
 
-    this.cloth = new this.ClothMaterial( xSegs, ySegs, this.clothFunction );
+    this.cloth = new ClothMaterial( xSegs, ySegs, this.clothFunction, MASS );
     this.gravity = new THREE.Vector3( 0, - GRAVITY, 0 ).multiplyScalar( MASS );
     this.pins = [];
 
@@ -27,8 +27,6 @@ export default class Cloth {
     this.diff = new THREE.Vector3();
     this.onWindowResize = this.onWindowResize.bind(this);
     this.animate = this.animate.bind(this);
-
-    this.video = document.querySelector('.hero-video');
 
     //
     if ( WEBGL.isWebGLAvailable() === false ) {
@@ -46,20 +44,20 @@ export default class Cloth {
 
     // init pins
     // TODO in the separate function
-    var w = 20;
-    this.pins = [0, 150, w];
-    for ( let i = 0, max = 230; i < w; i++) {
+    var w = 16;
+    // var pins = [0, 150, w];
+    for ( var i = 0, max = 169; i < w; i++) {
       this.pins.push(max - i)
     }
-
+    var video = document.getElementById("video");
     var m = 0;
     var v = 0;
 
-    while (m < 230) {
+    while (m < 169) {
       v = m + w;
       m = v + 1;
       this.pins.push(v);
-      if (m <= 230) this.pins.push(m);
+      if (m <= 169) this.pins.push(m);
     }
   }
 
@@ -83,73 +81,6 @@ export default class Cloth {
     const correctionHalf = correction.multiplyScalar( 0.45 );
     p1.position.add( correctionHalf );
     p2.position.sub( correctionHalf );
-  }
-
-  ClothMaterial( w, h, clothFunction) {
-
-    w = w || 10;
-    h = h || 10;
-
-    this.w = w;
-    this.h = h;
-
-    let particles = [];
-    let constraints = [];
-
-    let u, v;
-
-    // Create particles
-    for ( v = 0; v <= h; v ++ ) {
-      for ( u = 0; u <= w; u ++ ) {
-        particles.push(
-          new Particle( u / w, v / h, 0, MASS, clothFunction)
-        );
-      }
-    }
-
-    // Structural
-    for ( v = 0; v < h; v ++ ) {
-      for ( u = 0; u < w; u ++ ) {
-
-        constraints.push( [
-          particles[ index( u, v ) ],
-          particles[ index( u, v + 1 ) ],
-          500/20
-        ] );
-
-        constraints.push( [
-          particles[ index( u, v ) ],
-          particles[ index( u + 1, v ) ],
-          500/20
-        ] );
-      }
-    }
-
-    for ( u = w, v = 0; v < h; v ++ ) {
-      constraints.push( [
-        particles[ index( u, v ) ],
-        particles[ index( u, v + 1 ) ],
-        500/20
-      ] );
-    }
-
-    for ( v = h, u = 0; u < w; u ++ ) {
-
-      constraints.push( [
-        particles[ index( u, v ) ],
-        particles[ index( u + 1, v ) ],
-        500/20
-      ] );
-    }
-
-    this.particles = particles;
-    this.constraints = constraints;
-
-    function index( u, v ) {
-      return u + v * ( w + 1 );
-    }
-
-    this.index = index;
   }
 
   simulate( time ) {
@@ -264,16 +195,12 @@ export default class Cloth {
 
     // init cloth material
 
-    // var loader = new THREE.TextureLoader();
-    // var clothTexture = loader.load( './assets/img/dark-texture.png' );
-    // clothTexture.anisotropy = 16;
-
-    var videoTexture = new THREE.VideoTexture( this.video );
-    videoTexture.minFilter = THREE.LinearFilter;
-    videoTexture.magFilter = THREE.LinearFilter;
+    var loader = new THREE.TextureLoader();
+    var clothTexture = loader.load( './textures/flat-white.png' );
+    clothTexture.anisotropy = 16;
 
     var clothMaterial = new THREE.MeshLambertMaterial( {
-      map: videoTexture,
+      map: clothTexture,
       side: THREE.DoubleSide,
       alphaTest: 0.5
     } );
@@ -293,7 +220,7 @@ export default class Cloth {
     this.object.customDepthMaterial = new THREE.MeshDepthMaterial( {
 
       depthPacking: THREE.RGBADepthPacking,
-      map: videoTexture,
+      map: clothTexture,
       alphaTest: 0.5
 
     } );

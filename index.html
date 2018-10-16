@@ -36,13 +36,17 @@
 			<!--&lt;!&ndash; <a onclick="togglePins();">Pins</a> &ndash;&gt;-->
 		<!--</div>-->
 
+    <div class="cloth-blink"></div>
+
 		<script src="js/three.js"></script>
 		<script src="js/WebGL.js"></script>
 		<script src="js/Cloth.js" type="module"></script>
 
     <script type="module">
       import Cloth from "./js/Cloth.js";
-      new Cloth();
+      const cloth = new Cloth();
+      cloth.init();
+      cloth.animate();
     </script>
 
 	</body>
